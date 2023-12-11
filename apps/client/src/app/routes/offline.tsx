@@ -1,9 +1,8 @@
-import Chessboard from '../components/chessboard/chessboard';
+import { Chessboard } from '../components/chessboard';
 
 export const Gameoff = () => {
   return (
-    <div>
-      gameoff
+    <div className="flex h-full w-full items-center justify-center">
       <Chessboard />
     </div>
   );
