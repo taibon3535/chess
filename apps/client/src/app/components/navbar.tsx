@@ -1,27 +1,22 @@
 import { Link } from 'react-router-dom';
-import { FaChess, FaChessRook, FaHome } from 'react-icons/fa';
-import './navbar.css';
+import ComputerDesktopIcon from '@heroicons/react/24/outline/ComputerDesktopIcon';
+import UsersIcon from '@heroicons/react/24/outline/UsersIcon';
+import HomeIcon from '@heroicons/react/24/outline/HomeIcon';
 
-export const Navbar = () => {
+export const Navbar: React.FC = () => {
   return (
-    <div
-      id="nav"
-      className="flex flex-row items-center justify-evenly w-24 h-full border-r"
-    >
-      <Link className="w-1/2" to="">
-        <FaHome id="icon" />
-        home
+    <nav className="border-accent flex h-16 w-full items-center justify-around border-b p-2">
+      <Link to="/" className="aspect-square h-full">
+        <HomeIcon />
       </Link>
 
-      <Link className="w-1/2" to="gameoff">
-        <FaChessRook id="icon" />
-        start a gameoffline
+      <Link to="gameoff" className="aspect-square h-full">
+        <ComputerDesktopIcon />
       </Link>
 
-      <Link className="w-1/2" to="gameon">
-        <FaChess id="icon" />
-        start a game online
+      <Link to="gameon" className="aspect-square h-full">
+        <UsersIcon />
       </Link>
-    </div>
+    </nav>
   );
 };
