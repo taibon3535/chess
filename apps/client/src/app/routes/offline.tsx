@@ -1,9 +1,5 @@
-import { Chessboard } from '../components/chessboard/chessboard';
+import ChessGame from '../components/chessgame/chessgame';
 
 export const Gameoff = () => {
-  return (
-    <div className="flex h-full w-full items-center justify-center">
-      <Chessboard />
-    </div>
-  );
+  return <ChessGame />;
 };
