@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Chessboard from 'chessboardjsx';
-import { Chess } from 'chess.js';
+import { Chess, Square } from 'chess.js';
 import { toast } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { handleMove } from '../../../../src/utils/handle-move';
 import { handleCheck } from '../../../../src/utils/handle-check';
 import { handleCheckmate } from '../../../../src/utils/handle-checkmate';
+import { getPieceLocations } from '../../../../src/utils/get-pieces-locations';
 
 interface ChessGameState {
   fen: string;
@@ -120,7 +121,20 @@ export default ChessGameDep;
 export const ChessGame = () => {
   const game = useAppSelector((state) => state.game.game);
   const fen = useAppSelector((state) => state.game.fen);
+  const isCheck = useAppSelector((state) => state.game.isCheck);
   const dispatch = useAppDispatch();
+  const [check, setCheck] = useState<Square>();
+
+  useEffect(() => {
+    const checkPos =
+      isCheck === true
+        ? getPieceLocations(game, { color: 'b', type: 'k' })
+        : null;
+
+    if (checkPos && checkPos[0]) {
+      setCheck(checkPos[0].square);
+    }
+  }, [isCheck]);
 
   return (
     <div className="flex items-center justify-center">
@@ -128,9 +142,20 @@ export const ChessGame = () => {
         position={fen}
         onDrop={({ sourceSquare, targetSquare }) => {
           handleMove(game, dispatch, { sourceSquare, targetSquare });
-          handleCheck(game);
+          handleCheck(game, dispatch);
           handleCheckmate(game);
         }}
+        squareStyles={
+          isCheck === true && check
+            ? {
+                [check]: {
+                  border: 3,
+                  borderStyle: 'solid',
+                  borderColor: 'red',
+                },
+              }
+            : {}
+        }
       />
     </div>
   );
