@@ -3,7 +3,7 @@ import { Navbar } from '../components/navbar';
 import { ToastContainer } from 'react-toastify';
 import { useUser } from '@clerk/clerk-react';
 import 'react-toastify/dist/ReactToastify.css';
-import { useFindOrCreateUserMutation } from '../store';
+import { useFindOrCreateUserMutation } from '../store/services/users.api';
 import { useEffect } from 'react';
 
 export const Root = () => {
