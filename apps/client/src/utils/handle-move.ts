@@ -1,6 +1,6 @@
 import { Chess } from 'chess.js';
 import { AppDispatch } from '../app/store';
-import { setFen } from '../app/store/slices';
+import { setFen, setTurn } from '../app/store/slices';
 
 export const handleMove = (
   game: Chess,
@@ -25,6 +25,7 @@ export const handleMove = (
     }
 
     dispatch(setFen(game.fen()));
+    dispatch(setTurn(game.turn()));
   } catch (e: unknown) {
     console.error('An error occurred during the move:', e);
   }
