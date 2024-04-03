@@ -13,7 +13,9 @@ export const Root = () => {
     throw new Error(' you need to log in ');
   }
 
-  const [findOrCreate] = useFindOrCreateUserMutation();
+  const [findOrCreate] = useFindOrCreateUserMutation({
+    fixedCacheKey: 'logged-in-user',
+  });
 
   useEffect(() => {
     findOrCreate({ clerkUserId: user.id });
