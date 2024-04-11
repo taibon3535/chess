@@ -7,6 +7,7 @@ import { handleMove } from '../../../../src/utils/handle-move';
 import { handleCheck } from '../../../../src/utils/handle-check';
 import { handleCheckmate } from '../../../../src/utils/handle-checkmate';
 import { getPieceLocations } from '../../../../src/utils/get-pieces-locations';
+import { WebsocketContext } from 'apps/client/src/app/context/WebsocketContext';
 
 interface ChessGameState {
   fen: string;
@@ -24,6 +25,18 @@ class ChessGameDep extends React.Component<ChessGameProps, ChessGameState> {
     };
   }
 
+  componentDidMount() {
+    socket.on('onMove', ({ from, to }) => {
+      console.log('{ from, to }');
+    });
+  }
+
+  componentDidUpdate() {
+    socket.on('newMove', ({ from, to }) => {
+      console.log('{ from, to }');
+    });
+  }
+
   handleMove = (move: {
     sourceSquare: string;
     targetSquare: string;
@@ -38,6 +51,9 @@ class ChessGameDep extends React.Component<ChessGameProps, ChessGameState> {
 
       if (result !== null) {
         this.setState({ fen: this.game.fen() });
+        socket.emit('newMove', result);
+        console.log(move.sourceSquare);
+        console.log(move.targetSquare);
       } else {
         console.error('Move was not successful.');
       }
@@ -54,7 +70,7 @@ class ChessGameDep extends React.Component<ChessGameProps, ChessGameState> {
       }); // Notify check
     }
 
-    // is Checkmate
+    // Is Checkmate
     if (this.game.isCheckmate()) {
       const turn = this.game.turn();
       toast.error(`Checkmate, ${turn === 'b' ? 'White' : 'Black'} wins! `, {
@@ -118,6 +134,10 @@ class ChessGameDep extends React.Component<ChessGameProps, ChessGameState> {
 
 export default ChessGameDep;
 
+import io from 'socket.io-client';
+
+const socket = io('localhost:3000');
+
 export const ChessGame = () => {
   const game = useAppSelector((state) => state.game.game);
   const fen = useAppSelector((state) => state.game.fen);
@@ -136,6 +156,36 @@ export const ChessGame = () => {
     }
   }, [isCheck]);
 
+  useEffect(() => {
+    socket.emit(
+      'join',
+      { name: 'Frank', gameID: '20' },
+      ({ error, color }: { error: Error; color: unknown }) => {
+        console.log({ color });
+      },
+    );
+    socket.on('welcome', ({ message, opponent }) => {
+      console.log({ message, opponent });
+    });
+    socket.on('opponentJoin', ({ message, opponent }) => {
+      console.log({ message, opponent });
+    });
+
+    socket.on('newMove', (body) => {
+      console.log(body);
+    });
+
+    socket.on('newMove', (body) => {
+      const { to, from } = body.content;
+      handleMove(game, dispatch, {
+        sourceSquare: from,
+        targetSquare: to,
+      });
+      handleCheck(game, dispatch);
+      handleCheckmate(game);
+    });
+  }, [game]);
+
   return (
     <div className="flex items-center justify-center">
       <Chessboard
@@ -144,6 +194,11 @@ export const ChessGame = () => {
           handleMove(game, dispatch, { sourceSquare, targetSquare });
           handleCheck(game, dispatch);
           handleCheckmate(game);
+          socket.emit('move', {
+            gameID: '20',
+            from: sourceSquare,
+            to: targetSquare,
+          });
         }}
         squareStyles={
           isCheck === true && check

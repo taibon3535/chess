@@ -7,6 +7,12 @@ import {
   SignedIn,
   SignedOut,
 } from '@clerk/clerk-react';
+
+import {
+  socket,
+  WebsocketProvider,
+  WebsocketContext,
+} from './app/context/WebsocketContext';
 import { Root } from './app/routes/root';
 import { Gameon } from './app/routes/online';
 import { Gameoff } from './app/routes/offline';
@@ -41,15 +47,17 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <StrictMode>
-    <Provider store={store}>
-      <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-        <SignedIn>
-          <RouterProvider router={router} />
-        </SignedIn>
-        <SignedOut>
-          <RedirectToSignIn />
-        </SignedOut>
-      </ClerkProvider>
-    </Provider>
+    <WebsocketProvider value={socket}>
+      <Provider store={store}>
+        <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+          <SignedIn>
+            <RouterProvider router={router} />
+          </SignedIn>
+          <SignedOut>
+            <RedirectToSignIn />
+          </SignedOut>
+        </ClerkProvider>
+      </Provider>
+    </WebsocketProvider>
   </StrictMode>,
 );

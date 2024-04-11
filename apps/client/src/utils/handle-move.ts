@@ -1,6 +1,7 @@
 import { Chess } from 'chess.js';
 import { AppDispatch } from '../app/store';
 import { setFen, setTurn } from '../app/store/slices';
+import { socket, WebsocketContext } from '../app/context/WebsocketContext';
 
 export const handleMove = (
   game: Chess,
@@ -20,8 +21,13 @@ export const handleMove = (
       promotion: 'q',
     });
 
-    if (result === null) {
-      throw new Error('Move was not successful');
+    if (result !== null) {
+      // this.setState({ fen: this.game.fen() });
+      socket.emit('newMove', result);
+      console.log(result.from);
+      console.log(result.to);
+    } else {
+      console.error('Move was not successful.');
     }
 
     dispatch(setFen(game.fen()));
