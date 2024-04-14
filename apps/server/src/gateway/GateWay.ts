@@ -5,7 +5,6 @@ import {
   MessageBody,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket } from 'dgram';
 
 import { Server } from 'socket.io';
 @WebSocketGateway({

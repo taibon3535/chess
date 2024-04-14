@@ -18,6 +18,7 @@ import { Gameon } from './app/routes/online';
 import { Gameoff } from './app/routes/offline';
 import { Provider } from 'react-redux';
 import { store } from './app/store';
+import { Home } from './app/routes/home';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -31,11 +32,15 @@ const router = createBrowserRouter([
     element: <Root />,
     children: [
       {
+        element: <Home />,
+        index: true,
+      },
+      {
         path: '/gameoff',
         element: <Gameoff />,
       },
       {
-        path: '/gameon',
+        path: '/gameon/:roomId',
         element: <Gameon />,
       },
     ],
