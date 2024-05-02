@@ -4,7 +4,10 @@ import {
   SubscribeMessage,
   MessageBody,
   WebSocketServer,
+  ConnectedSocket,
 } from '@nestjs/websockets';
+import { Socket } from 'socket.io';
+import { Move } from 'chess.js';
 
 import { Server } from 'socket.io';
 @WebSocketGateway({
@@ -25,19 +28,29 @@ export class MyGateWay implements OnModuleInit {
 
   @SubscribeMessage('newMessage')
   onNewMessage(@MessageBody() body: any) {
-    console.log(body);
     this.server.emit('onMessage', {
       msg: 'New Message',
       content: body,
     });
   }
 
-  @SubscribeMessage('newMove')
-  onNewMove(@MessageBody() body: string) {
-    console.log(body);
-    this.server.emit('newMove', {
-      msg: 'New Move',
+  @SubscribeMessage('joinRoom')
+  async onJoinRoom(
+    @MessageBody() body: any,
+    @ConnectedSocket() socket: Socket,
+  ) {
+    socket.join(body);
+    socket.to(body).emit('joinRoom', {
+      msg: `${socket.id} join room ${body}`,
       content: body,
+    });
+  }
+
+  @SubscribeMessage('newMove')
+  onNewMove(@MessageBody() body: { room: string; result: Move }) {
+    this.server.in(body.room).emit('newMove', {
+      room: body.room,
+      result: body.result,
     });
   }
 }
