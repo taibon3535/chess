@@ -13,6 +13,7 @@ export const handleMove = (
     sourceSquare: string;
     targetSquare: string;
   },
+  room: string,
 ) => {
   try {
     const result = game.move({
@@ -22,10 +23,7 @@ export const handleMove = (
     });
 
     if (result !== null) {
-      // this.setState({ fen: this.game.fen() });
-      socket.emit('newMove', result);
-      console.log(result.from);
-      console.log(result.to);
+      socket.emit('newMove', { result, room });
     } else {
       console.error('Move was not successful.');
     }

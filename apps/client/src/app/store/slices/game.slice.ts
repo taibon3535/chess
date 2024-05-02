@@ -8,6 +8,7 @@ const initialState = {
   game,
   turn: game.turn(),
   isCheck: game.isCheck(),
+  room: '',
 };
 
 export const gameSlice = createSlice({
@@ -23,9 +24,12 @@ export const gameSlice = createSlice({
     setIsCheck: (state, action: PayloadAction<boolean>) => {
       state.isCheck = action.payload;
     },
+    setRoom: (state, action: PayloadAction<string>) => {
+      state.room = action.payload;
+    },
   },
 });
 
-export const { setFen, setTurn, setIsCheck } = gameSlice.actions;
+export const { setFen, setTurn, setIsCheck, setRoom } = gameSlice.actions;
 
 export default gameSlice.reducer;
