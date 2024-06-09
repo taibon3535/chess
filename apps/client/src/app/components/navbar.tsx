@@ -15,10 +15,6 @@ export const Navbar: React.FC = () => {
       <Link to="gameoff" className="aspect-square h-full">
         <ComputerDesktopIcon />
       </Link>
-
-      <Link to="gameon" className="aspect-square h-full">
-        <UsersIcon />
-      </Link>
     </nav>
   );
 };

@@ -18,23 +18,13 @@ export const StyledButton: React.FC<StyledButtonProps> = ({ label }) => {
   const [messages, setMessages] = useState<MessagePayload[]>([]);
 
   useEffect(() => {
-    socket.on('connect', () => {
-      console.log('connected!');
-    });
+    socket.on('connect', () => {});
 
     socket.on('onMessage', (data: MessagePayload) => {
-      console.log('onMessage eveng recived!~');
-      console.log(data);
       setMessages((prev) => [...prev, data]);
     });
 
-    console.log(socket);
-
-    socket.on('onMove', (data: MessagePayload) => {
-      console.log('onMessage eveng recived!~');
-      //  console.log(data);
-      //  setMessages((prev) => [...prev, data]);
-    });
+    socket.on('onMove', (data: MessagePayload) => {});
 
     return () => {
       console.log('disconnecting');
