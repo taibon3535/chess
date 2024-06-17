@@ -7,7 +7,7 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { Move } from 'chess.js';
+import { Color } from 'chess.js';
 
 import { Server } from 'socket.io';
 
@@ -18,7 +18,10 @@ type Game = {
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:4200'],
+    origin: [
+      `http://${process.env.VITE_SERVER_HOSTNAME}:4200`,
+      'http://localhost:4200',
+    ],
   },
 })
 export class MyGateWay implements OnModuleInit {
@@ -54,9 +57,11 @@ export class MyGateWay implements OnModuleInit {
         fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       });
     }
-    socket.join(body.roomId);
 
-    console.log(this.games);
+    const color: Color = foundGame ? 'w' : 'b';
+
+    socket.join(body.roomId);
+    socket.emit('receiveColor', color);
   }
 
   @SubscribeMessage('newMove')
@@ -66,8 +71,6 @@ export class MyGateWay implements OnModuleInit {
     );
 
     this.games[foundGame] = { ...this.games[foundGame], fen: body.fen };
-
-    console.log(this.games);
 
     this.server.in(body.roomId).emit('newMove', {
       fen: body.fen,

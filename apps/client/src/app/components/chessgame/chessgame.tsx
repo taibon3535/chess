@@ -7,7 +7,7 @@ import { handleCheck } from '../../../../src/utils/handle-check';
 import { handleCheckmate } from '../../../../src/utils/handle-checkmate';
 import { getPieceLocations } from '../../../../src/utils/get-pieces-locations';
 import { WebsocketContext } from '../../../../src/app/context/WebsocketContext';
-import { setFen } from '../../store/slices';
+import { setFen, setTurn } from '../../store/slices';
 import { useParams } from 'react-router-dom';
 
 type Props = { roomId: string };
@@ -21,6 +21,8 @@ export const ChessGame: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
   const [check, setCheck] = useState<Square>();
   const params = useParams();
+  const turn = useAppSelector((state) => state.game.turn);
+  const color = useAppSelector((state) => state.game.color);
 
   useEffect(() => {
     const checkPos =
@@ -36,6 +38,7 @@ export const ChessGame: React.FC<Props> = () => {
   useEffect(() => {
     socket.on('newMove', (body: { fen: string }) => {
       game.load(body.fen);
+      dispatch(setTurn(game.turn()));
       dispatch(setFen(body.fen));
       handleCheck(game, dispatch);
       handleCheckmate(game);
@@ -51,7 +54,9 @@ export const ChessGame: React.FC<Props> = () => {
       <Chessboard
         position={fen}
         onDrop={({ sourceSquare, targetSquare }) => {
-          handleMove(game, dispatch, { sourceSquare, targetSquare }, room);
+          if (color === turn) {
+            handleMove(game, dispatch, { sourceSquare, targetSquare }, room);
+          }
           handleCheck(game, dispatch);
           handleCheckmate(game);
         }}
