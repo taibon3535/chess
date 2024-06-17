@@ -7,6 +7,8 @@ import { handleCheck } from '../../../../src/utils/handle-check';
 import { handleCheckmate } from '../../../../src/utils/handle-checkmate';
 import { getPieceLocations } from '../../../../src/utils/get-pieces-locations';
 import { WebsocketContext } from '../../../../src/app/context/WebsocketContext';
+import { setFen } from '../../store/slices';
+import { useParams } from 'react-router-dom';
 
 type Props = { roomId: string };
 
@@ -18,6 +20,7 @@ export const ChessGame: React.FC<Props> = () => {
   const room = useAppSelector((state) => state.game.room);
   const dispatch = useAppDispatch();
   const [check, setCheck] = useState<Square>();
+  const params = useParams();
 
   useEffect(() => {
     const checkPos =
@@ -31,21 +34,17 @@ export const ChessGame: React.FC<Props> = () => {
   }, [isCheck]);
 
   useEffect(() => {
-    socket.on('newMove', (body: { room: string; result: Move }) => {
-      const { to, from } = body.result;
-      handleMove(
-        game,
-        dispatch,
-        {
-          sourceSquare: from,
-          targetSquare: to,
-        },
-        room,
-      );
+    socket.on('newMove', (body: { fen: string }) => {
+      game.load(body.fen);
+      dispatch(setFen(body.fen));
       handleCheck(game, dispatch);
       handleCheckmate(game);
     });
-  }, [game]);
+  }, [game, fen]);
+
+  useEffect(() => {
+    socket.emit('joinRoom', { roomId: params.roomId });
+  }, []);
 
   return (
     <div className="flex items-center justify-center">

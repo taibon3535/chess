@@ -23,7 +23,7 @@ export const handleMove = (
     });
 
     if (result !== null) {
-      socket.emit('newMove', { result, room });
+      socket.emit('newMove', { fen: game.fen(), roomId: room });
     } else {
       console.error('Move was not successful.');
     }

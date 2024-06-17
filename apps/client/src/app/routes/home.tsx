@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { socket } from '../context/WebsocketContext';
 
 import { useAppDispatch } from '../store';
@@ -26,7 +26,6 @@ export const Home: React.FC = () => {
           }
           dispatch(setRoom(roomId));
           navigate(`/gameon/${roomId}`);
-          socket.emit('joinRoom', roomId);
         }}
       >
         Join Room

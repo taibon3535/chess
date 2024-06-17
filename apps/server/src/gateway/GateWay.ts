@@ -10,6 +10,12 @@ import { Socket } from 'socket.io';
 import { Move } from 'chess.js';
 
 import { Server } from 'socket.io';
+
+type Game = {
+  roomId: string;
+  fen: string;
+};
+
 @WebSocketGateway({
   cors: {
     origin: ['http://localhost:4200'],
@@ -18,6 +24,8 @@ import { Server } from 'socket.io';
 export class MyGateWay implements OnModuleInit {
   @WebSocketServer()
   server: Server;
+
+  games: Game[] = [];
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
@@ -36,21 +44,33 @@ export class MyGateWay implements OnModuleInit {
 
   @SubscribeMessage('joinRoom')
   async onJoinRoom(
-    @MessageBody() body: any,
+    @MessageBody() body: { roomId: string },
     @ConnectedSocket() socket: Socket,
   ) {
-    socket.join(body);
-    socket.to(body).emit('joinRoom', {
-      msg: `${socket.id} join room ${body}`,
-      content: body,
-    });
+    const foundGame = this.games.find((game) => game.roomId === body.roomId);
+    if (!foundGame) {
+      this.games.push({
+        roomId: body.roomId,
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+      });
+    }
+    socket.join(body.roomId);
+
+    console.log(this.games);
   }
 
   @SubscribeMessage('newMove')
-  onNewMove(@MessageBody() body: { room: string; result: Move }) {
-    this.server.in(body.room).emit('newMove', {
-      room: body.room,
-      result: body.result,
+  onNewMove(@MessageBody() body: Game) {
+    const foundGame = this.games.findIndex(
+      (game) => game.roomId === body.roomId,
+    );
+
+    this.games[foundGame] = { ...this.games[foundGame], fen: body.fen };
+
+    console.log(this.games);
+
+    this.server.in(body.roomId).emit('newMove', {
+      fen: body.fen,
     });
   }
 }
