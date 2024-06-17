@@ -12,10 +12,11 @@ async function bootstrap() {
   const globalPrefix = 'api';
   app.enableCors();
   app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
+  const port = process.env.VITE_SERVER_PORT || 3000;
+  const hostname = process.env.VITE_SERVER_HOSTNAME ?? '';
+  await app.listen(port, hostname);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
+    `🚀 Application is running on: ${await app.getUrl()}/${globalPrefix}`,
   );
 }
 
