@@ -1,9 +1,5 @@
-import { Chessboard } from '../components/chessboard/chessboard';
+import { StyledButton } from '../components/websocket.chack';
 
 export const Gameoff = () => {
-  return (
-    <div className="flex h-full w-full items-center justify-center">
-      <Chessboard />
-    </div>
-  );
+  return <StyledButton label="e" />;
 };
