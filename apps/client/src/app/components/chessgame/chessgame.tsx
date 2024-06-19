@@ -23,6 +23,7 @@ export const ChessGame: React.FC<Props> = () => {
   const params = useParams();
   const turn = useAppSelector((state) => state.game.turn);
   const color = useAppSelector((state) => state.game.color);
+  const side = color === 'w' ? 'white' : 'black';
 
   useEffect(() => {
     const checkPos =
@@ -52,6 +53,7 @@ export const ChessGame: React.FC<Props> = () => {
   return (
     <div className="flex items-center justify-center">
       <Chessboard
+        orientation={side}
         position={fen}
         onDrop={({ sourceSquare, targetSquare }) => {
           if (color === turn) {
