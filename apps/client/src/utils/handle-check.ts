@@ -8,6 +8,7 @@ export const handleCheck = (game: Chess, dispatch: AppDispatch) => {
     dispatch(setIsCheck(game.isCheck()));
     toast.warn(`Your in Check, protect your king!`, {
       position: 'bottom-left',
+      toastId: 'check',
     });
   }
 };

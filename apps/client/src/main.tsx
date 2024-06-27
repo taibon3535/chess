@@ -8,17 +8,16 @@ import {
   SignedOut,
 } from '@clerk/clerk-react';
 
-import {
-  socket,
-  WebsocketProvider,
-  WebsocketContext,
-} from './app/context/WebsocketContext';
+import { socket, WebsocketProvider } from './app/context/WebsocketContext';
 import { Root } from './app/routes/root';
 import { Gameon } from './app/routes/online';
 import { Gameoff } from './app/routes/offline';
 import { Provider } from 'react-redux';
 import { store } from './app/store';
 import { Home } from './app/routes/home';
+import { ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -64,5 +63,7 @@ root.render(
         </ClerkProvider>
       </Provider>
     </WebsocketProvider>
+
+    <ToastContainer />
   </StrictMode>,
 );

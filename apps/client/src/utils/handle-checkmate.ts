@@ -6,6 +6,7 @@ export const handleCheckmate = (game: Chess) => {
     const turn = game.turn();
     toast.error(`Checkmate, ${turn === 'b' ? 'White' : 'Black'} wins! `, {
       position: 'bottom-left',
+      toastId: 'checkmate',
     });
   }
 
